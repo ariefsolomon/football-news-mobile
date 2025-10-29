@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # football_news
 
 A new Flutter project.
@@ -17,4 +16,3 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 =======
 # football-news-mobile
->>>>>>> 0c247be531d3fdf9ae26aa2493ee26011bbb329c
