@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:football_news/widgets/left_drawer.dart';
 import 'package:football_news/widgets/news_card.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:football_news/screens/menu.dart';
 
 List<Map<String, dynamic>> newsList = [];
 
@@ -56,6 +60,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Form Tambah Berita')),
@@ -116,7 +121,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  value: _category,
+                  initialValue: _category,
                   items: _categories
                       .map(
                         (cat) => DropdownMenuItem(
@@ -162,37 +167,49 @@ class _NewsFormPageState extends State<NewsFormPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         Colors.blueAccent,
                       ),
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        newsList.add({
-                          "title": _title,
-                          "content": _content,
-                          "category": _category,
-                          "thumbnail": _thumbnail,
-                          "isFeatured": _isFeatured,
-                        });
+                        // TODO: Replace the URL with your app's URL
+                        // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+                        // If you using chrome,  use URL http://localhost:8000
 
-                        await _saveNewsToStorage();
-
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Berita berhasil disimpan!'),
-                            content: Text('Judul: $_title'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
+                        final response = await request.postJson(
+                          "http://localhost:8000/create-flutter/",
+                          jsonEncode({
+                            "title": _title,
+                            "content": _content,
+                            "thumbnail": _thumbnail,
+                            "category": _category,
+                            "is_featured": _isFeatured,
+                          }),
                         );
-
-                        _formKey.currentState!.reset();
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("News successfully saved!"),
+                              ),
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Something went wrong, please try again.",
+                                ),
+                              ),
+                            );
+                          }
+                        }
                       }
                     },
                     child: const Text(
