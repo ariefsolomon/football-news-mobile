@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:football_news/widgets/left_drawer.dart';
 import 'package:football_news/widgets/news_card.dart';
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:football_news/screens/menu.dart';
