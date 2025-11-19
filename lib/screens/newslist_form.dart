@@ -52,10 +52,10 @@ class _NewsFormPageState extends State<NewsFormPage> {
     }
   }
 
-  Future<void> _saveNewsToStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('newsList', jsonEncode(newsList));
-  }
+  // Future<void> _saveNewsToStorage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('newsList', jsonEncode(newsList));
+  // }
 
   @override
   Widget build(BuildContext context) {
